@@ -525,9 +525,9 @@ job_description = st.text_area(
         "Docker and AWS. The candidate should have good "
         "communication and problem solving skills."
     ),
-    height=250
+    height=250,
+    key="job_description"
 )
-
 
 # JOB ANALYSIS
 # =========================================================
