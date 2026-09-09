@@ -503,10 +503,7 @@ if score_data["suggestions"]:
             f"💡 {index}. {suggestion}"
         )
 
-
-# JOB DESCRIPTION MATCHING
-# =========================================================
-
+#JOB DESCRIPTION MATCHING 
 st.header("🎯 Job Description Matching")
 
 st.write(
@@ -516,19 +513,122 @@ st.write(
     """
 )
 
-job_description = st.text_area(
-    "📋 Paste Job Description",
-    placeholder=(
-        "Example:\n\n"
-        "We are looking for a Python Developer with experience "
-        "in Python, SQL, Pandas, NumPy, Machine Learning, Git, "
-        "Docker and AWS. The candidate should have good "
-        "communication and problem solving skills."
-    ),
-    height=250,
-    key="job_description"
-)
+with st.form("job_description_form"):
 
+    job_description = st.text_area(
+        "📋 Paste Job Description",
+        placeholder=(
+            "Example:\n\n"
+            "We are looking for a Python Developer with experience "
+            "in Python, SQL, Pandas, NumPy, Machine Learning, Git, "
+            "Docker and AWS. The candidate should have good "
+            "communication and problem solving skills."
+        ),
+        height=250
+    )
+
+    submitted = st.form_submit_button(
+        "🚀 Submit Job Description",
+        use_container_width=True
+    )
+
+if submitted:
+
+    if not job_description.strip():
+        st.warning(
+            "⚠️ Please paste a job description before submitting."
+        )
+
+    else:
+
+        job_skills = extract_job_skills(job_description)
+
+        match_data = calculate_job_match(
+            skills,
+            job_skills
+        )
+
+        basic_match_score = match_data["match_score"]
+
+        st.subheader("🎯 Job Match Score")
+
+        st.metric(
+            "Skill Match",
+            f"{basic_match_score}%"
+        )
+
+        st.progress(
+            min(max(basic_match_score / 100, 0.0), 1.0)
+        )
+
+        if basic_match_score >= 80:
+            st.success(
+                "🔥 Excellent match! Your skills closely match this job."
+            )
+
+        elif basic_match_score >= 60:
+            st.info(
+                "👍 Good match! You have many of the required skills."
+            )
+
+        elif basic_match_score >= 40:
+            st.warning(
+                "⚠️ Moderate match. Consider developing the missing skills."
+            )
+
+        else:
+            st.error(
+                "❌ Low match. Several job requirements are missing."
+            )
+
+        st.subheader("✅ Matching Skills")
+
+        matched_skills = match_data["matched_skills"]
+
+        if matched_skills:
+
+            columns = st.columns(3)
+
+            for index, skill in enumerate(matched_skills):
+
+                with columns[index % 3]:
+                    st.success(f"✓ {skill.title()}")
+
+        else:
+            st.info("No matching skills were found.")
+
+        st.subheader("❌ Skills You Should Learn")
+
+        missing_skills = match_data["missing_skills"]
+
+        if missing_skills:
+
+            columns = st.columns(3)
+
+            for index, skill in enumerate(missing_skills):
+
+                with columns[index % 3]:
+                    st.error(f"✗ {skill.title()}")
+
+        else:
+            st.success("🎉 No major missing skills detected!")
+
+        st.subheader("📋 Required Job Skills")
+
+        if job_skills:
+
+            st.write(
+                ", ".join(
+                    skill.title()
+                    for skill in job_skills
+                )
+            )
+
+        else:
+
+            st.warning(
+                "No recognized skills were found in this job description."
+            )
 # JOB ANALYSIS
 # =========================================================
 
