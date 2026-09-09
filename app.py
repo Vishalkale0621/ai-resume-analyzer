@@ -503,7 +503,9 @@ if score_data["suggestions"]:
             f"💡 {index}. {suggestion}"
         )
 
-#JOB DESCRIPTION MATCHING 
+# JOB DESCRIPTION MATCHING
+# =========================================================
+
 st.header("🎯 Job Description Matching")
 
 st.write(
@@ -532,107 +534,9 @@ with st.form("job_description_form"):
         use_container_width=True
     )
 
-if submitted:
 
-    if not job_description.strip():
-        st.warning(
-            "⚠️ Please paste a job description before submitting."
-        )
-
-    else:
-
-        job_skills = extract_job_skills(job_description)
-
-        match_data = calculate_job_match(
-            skills,
-            job_skills
-        )
-
-        basic_match_score = match_data["match_score"]
-
-        st.subheader("🎯 Job Match Score")
-
-        st.metric(
-            "Skill Match",
-            f"{basic_match_score}%"
-        )
-
-        st.progress(
-            min(max(basic_match_score / 100, 0.0), 1.0)
-        )
-
-        if basic_match_score >= 80:
-            st.success(
-                "🔥 Excellent match! Your skills closely match this job."
-            )
-
-        elif basic_match_score >= 60:
-            st.info(
-                "👍 Good match! You have many of the required skills."
-            )
-
-        elif basic_match_score >= 40:
-            st.warning(
-                "⚠️ Moderate match. Consider developing the missing skills."
-            )
-
-        else:
-            st.error(
-                "❌ Low match. Several job requirements are missing."
-            )
-
-        st.subheader("✅ Matching Skills")
-
-        matched_skills = match_data["matched_skills"]
-
-        if matched_skills:
-
-            columns = st.columns(3)
-
-            for index, skill in enumerate(matched_skills):
-
-                with columns[index % 3]:
-                    st.success(f"✓ {skill.title()}")
-
-        else:
-            st.info("No matching skills were found.")
-
-        st.subheader("❌ Skills You Should Learn")
-
-        missing_skills = match_data["missing_skills"]
-
-        if missing_skills:
-
-            columns = st.columns(3)
-
-            for index, skill in enumerate(missing_skills):
-
-                with columns[index % 3]:
-                    st.error(f"✗ {skill.title()}")
-
-        else:
-            st.success("🎉 No major missing skills detected!")
-
-        st.subheader("📋 Required Job Skills")
-
-        if job_skills:
-
-            st.write(
-                ", ".join(
-                    skill.title()
-                    for skill in job_skills
-                )
-            )
-
-        else:
-
-            st.warning(
-                "No recognized skills were found in this job description."
-            )
-# JOB ANALYSIS
-# =========================================================
-
-if job_description.strip():
+# Only analyze after clicking Submit
+if submitted and job_description.strip():
 
     # -----------------------------------------------------
     # Extract Job Skills
@@ -641,7 +545,6 @@ if job_description.strip():
     job_skills = extract_job_skills(
         job_description
     )
-
 
     # -----------------------------------------------------
     # Basic Skill Match
@@ -653,7 +556,6 @@ if job_description.strip():
     )
 
     basic_match_score = match_data["match_score"]
-
 
     # -----------------------------------------------------
     # Job Match Score
@@ -669,7 +571,6 @@ if job_description.strip():
     st.progress(
         min(max(basic_match_score / 100, 0.0), 1.0)
     )
-
 
     if basic_match_score >= 80:
 
@@ -694,7 +595,6 @@ if job_description.strip():
         st.error(
             "❌ Low match. Several job requirements are missing."
         )
-
 
     # -----------------------------------------------------
     # Matching Skills
@@ -722,7 +622,6 @@ if job_description.strip():
             "No matching skills were found."
         )
 
-
     # -----------------------------------------------------
     # Missing Skills
     # -----------------------------------------------------
@@ -749,9 +648,8 @@ if job_description.strip():
             "🎉 No major missing skills detected!"
         )
 
-
     # -----------------------------------------------------
-    # Required Skills
+    # Required Job Skills
     # -----------------------------------------------------
 
     st.subheader("📋 Required Job Skills")
@@ -771,7 +669,7 @@ if job_description.strip():
             "No recognized skills were found in this job description."
         )
 
-
+    # =====================================================
     # AI-STYLE SEMANTIC MATCH
     # =====================================================
 
@@ -813,7 +711,6 @@ if job_description.strip():
 
         semantic_score = 0
 
-
     # -----------------------------------------------------
     # Overall AI Score
     # -----------------------------------------------------
@@ -822,7 +719,6 @@ if job_description.strip():
         (semantic_score * 0.5)
         + (basic_match_score * 0.5)
     )
-
 
     col1, col2, col3 = st.columns(3)
 
@@ -847,11 +743,9 @@ if job_description.strip():
             f"{overall_score}%"
         )
 
-
     st.progress(
         min(max(overall_score / 100, 0.0), 1.0)
     )
-
 
     if overall_score >= 80:
 
@@ -877,12 +771,11 @@ if job_description.strip():
             "❌ Your resume currently has a low match with this job."
         )
 
-
+    # =====================================================
     # AI RECOMMENDATION
     # =====================================================
 
     st.header("💡 AI Recommendation")
-
 
     if overall_score >= 80:
 
@@ -916,7 +809,6 @@ if job_description.strip():
             "building practical projects around them."
         )
 
-
     if overall_score >= 80:
 
         st.success(
@@ -935,17 +827,13 @@ if job_description.strip():
             recommendation
         )
 
-
+    # =====================================================
     # PERSONALIZED IMPROVEMENT PLAN
     # =====================================================
 
     st.header("📝 Personalized Improvement Plan")
 
-
     improvements = []
-
-
-    # Missing skills
 
     if missing_skills:
 
@@ -959,9 +847,6 @@ if job_description.strip():
             )
             + "."
         )
-
-
-    # Resume score
 
     if resume_score < 60:
 
@@ -985,18 +870,12 @@ if job_description.strip():
             "measurable achievements and job-specific keywords."
         )
 
-
-    # Projects
-
     if score_data["projects"] < 15:
 
         improvements.append(
             "Add 2-3 strong projects and explain the technologies "
             "used, your contribution and the result."
         )
-
-
-    # Experience
 
     if score_data["experience"] < 25:
 
@@ -1005,18 +884,12 @@ if job_description.strip():
             "responsibilities, achievements and measurable results."
         )
 
-
-    # Education
-
     if score_data["education"] < 15:
 
         improvements.append(
             "Add your complete education details, degree, "
             "institution and relevant qualifications."
         )
-
-
-    # Display improvements
 
     for index, improvement in enumerate(
         improvements,
