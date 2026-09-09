@@ -16,7 +16,7 @@ from services.job_matcher import (
 # =========================================================
 
 st.markdown(
-    '<div class="main-title">🤖 Vishal\'s AI Resume Analyzer</div>',
+    '<div class="main-title">🤖 AI Resume Analyzer</div>',
     unsafe_allow_html=True
 )
 
